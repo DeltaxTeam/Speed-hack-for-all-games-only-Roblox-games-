@@ -1,0 +1,53 @@
+local delay = 0.1
+
+function runWithDelay(func, delay)
+  local thread = coroutine.wrap(func)
+  while true do
+    coroutine.resume(thread)
+    wait(delay)
+  end
+end
+
+function setDelay(newDelay)
+  delay = newDelay
+end
+
+function hackDelay(hackAmount)
+  setDelay(hackAmount)
+  print("Speed hack activated! Delay is now: " .. hackAmount)
+end
+
+function onButtonClick(button)
+  if button.Name == "HackButton" then
+    local hackAmount = tonumber(button.Text)
+    if hackAmount then
+      hackDelay(hackAmount)
+    else
+      print("Invalid hack amount: " .. button.Text)
+    end
+  end
+end
+
+function onButtonCreated(button)
+  button.ClickDetector.MouseClick:Connect(function()
+    onButtonClick(button)
+  end)
+end
+
+function createButton(parent, name, position, text)
+  local button = Instance.new("TextButton")
+  button.Name = name
+  button.Position = position
+  button.Size = UDim2.new(0, 100, 0, 50)
+  button.Text = text
+  button.BackgroundColor3 = Color3.new(0, 0, 0)
+  button.TextColor3 = Color3.new(1, 1, 1)
+  button.Font = Enum.Font.SourceSans
+  button.TextSize = 14
+  button.Parent = parent
+  onButtonCreated(button)
+end
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game.Players.LocalPlayer.PlayerGui
+createButton(screenGui, "HackButton", UDim2.new(0.5, -50, 0.5, -25), "Hack Speed")
